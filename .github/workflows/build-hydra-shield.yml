@@ -37,8 +37,11 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Android build components
-        run: sdkmanager "platforms;android-37" "build-tools;37.0.0" "ndk;30.0.14904198" "cmake;3.22.1"
+      - name: Accept Android SDK licences
+        run: yes | sdkmanager --licenses >/dev/null || true
+
+      - name: Install required platform and NDK
+        run: sdkmanager "platforms;android-37" "ndk;30.0.14904198"
 
       - name: Build universal debug APK
         working-directory: app
@@ -47,7 +50,10 @@ jobs:
       - name: Collect APK
         run: |
           mkdir -p release
-          find app/main/build/outputs/apk -name '*.apk' -exec cp {} release/HYDRA-SHIELD.apk \;
+          find app/main/build/outputs/apk -name '*universal*.apk' -exec cp {} release/HYDRA-SHIELD.apk \;
+          if [ ! -f release/HYDRA-SHIELD.apk ]; then
+            find app/main/build/outputs/apk -name '*.apk' -print -quit -exec cp {} release/HYDRA-SHIELD.apk \;
+          fi
           test -f release/HYDRA-SHIELD.apk
 
       - name: Upload HYDRA SHIELD APK
