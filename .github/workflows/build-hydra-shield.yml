@@ -24,11 +24,7 @@ jobs:
           git submodule update --init --recursive
 
       - name: Apply HYDRA SHIELD interface
-        run: |
-          unzip -o hydra-overlay.zip -d app
-          sed -i 's/compileSdk = 37/compileSdk = 36/' app/main/build.gradle.kts
-          sed -i 's/targetSdk = 37/targetSdk = 36/' app/main/build.gradle.kts
-          sed -i 's/ndkVersion = "30.0.14904198"/ndkVersion = "29.0.14206865"/' app/main/build.gradle.kts
+        run: unzip -o hydra-overlay.zip -x main/build.gradle.kts -d app
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
