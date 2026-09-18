@@ -34,11 +34,17 @@ jobs:
           cache: gradle
           cache-dependency-path: app/**/*.gradle*
 
+      - name: Locate Android SDK manager
+        run: |
+          SDKMANAGER_PATH="$(find "${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}/cmdline-tools" -type f -path '*/bin/sdkmanager' | sort -V | tail -n 1)"
+          test -x "$SDKMANAGER_PATH"
+          echo "SDKMANAGER_PATH=$SDKMANAGER_PATH" >> "$GITHUB_ENV"
+
       - name: Accept Android SDK licences
-        run: yes | sdkmanager --licenses >/dev/null || true
+        run: yes | "$SDKMANAGER_PATH" --licenses >/dev/null || true
 
       - name: Install stable Android platform and NDK
-        run: sdkmanager "platforms;android-36" "ndk;29.0.14206865"
+        run: "$SDKMANAGER_PATH" "platforms;android-36" "ndk;29.0.14206865"
 
       - name: Build universal debug APK
         working-directory: app
