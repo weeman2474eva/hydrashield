@@ -12,6 +12,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    env:
+      GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8
     steps:
       - name: Check out HYDRA SHIELD
         uses: actions/checkout@v5
@@ -41,14 +43,16 @@ jobs:
           echo "SDKMANAGER_PATH=$SDKMANAGER_PATH" >> "$GITHUB_ENV"
 
       - name: Accept Android SDK licences
-        run: yes | "$SDKMANAGER_PATH" --licenses >/dev/null || true
+        run: |
+          yes | "$SDKMANAGER_PATH" --licenses >/dev/null || true
 
       - name: Install stable Android platform and NDK
-        run: "$SDKMANAGER_PATH" "platforms;android-36" "ndk;29.0.14206865"
+        run: |
+          "$SDKMANAGER_PATH" "platforms;android-36" "ndk;29.0.14206865"
 
       - name: Build universal debug APK
         working-directory: app
-        run: ./gradlew :main:assembleSkeletonOvpn23Debug --stacktrace
+        run: ./gradlew :main:assembleSkeletonOvpn23Debug --stacktrace --no-daemon
 
       - name: Collect APK
         run: |
