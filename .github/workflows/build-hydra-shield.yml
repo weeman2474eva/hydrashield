@@ -41,10 +41,12 @@ jobs:
           echo "SDKMANAGER_PATH=$SDKMANAGER_PATH" >> "$GITHUB_ENV"
 
       - name: Accept Android SDK licences
-        run: yes | "$SDKMANAGER_PATH" --licenses >/dev/null || true
+        run: |
+          yes | "$SDKMANAGER_PATH" --licenses >/dev/null || true
 
       - name: Install stable Android platform and NDK
-        run: "$SDKMANAGER_PATH" "platforms;android-36" "ndk;29.0.14206865"
+        run: |
+          "$SDKMANAGER_PATH" "platforms;android-36" "ndk;29.0.14206865"
 
       - name: Build universal debug APK
         working-directory: app
@@ -65,4 +67,6 @@ jobs:
           name: HYDRA-SHIELD-APK
           path: release/HYDRA-SHIELD.apk
           if-no-files-found: error
+          retention-days: 30
+rror
           retention-days: 30
