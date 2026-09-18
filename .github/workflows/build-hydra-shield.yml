@@ -12,6 +12,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    env:
+      GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx6g -XX:MaxMetaspaceSize=768m -XX:+UseSerialGC -Dorg.gradle.workers.max=1 -Dfile.encoding=UTF-8
     steps:
       - name: Check out HYDRA SHIELD
         uses: actions/checkout@v5
@@ -24,7 +26,7 @@ jobs:
           git submodule update --init --recursive
 
       - name: Apply HYDRA SHIELD interface
-        run: unzip -o hydra-overlay.zip -x main/build.gradle.kts -d app
+        run: unzip -o hydra-overlay.zip -d app
 
       - name: Set up Java 17
         uses: actions/setup-java@v5
@@ -50,7 +52,7 @@ jobs:
 
       - name: Build universal debug APK
         working-directory: app
-        run: ./gradlew :main:assembleSkeletonOvpn23Debug --stacktrace
+        run: ./gradlew :main:assembleSkeletonOvpn23Debug --stacktrace --no-daemon --max-workers=1
 
       - name: Collect APK
         run: |
@@ -66,3 +68,5 @@ jobs:
         with:
           name: HYDRA-SHIELD-APK
           path: release/HYDRA-SHIELD.apk
+          if-no-files-found: error
+          retention-days: 30
