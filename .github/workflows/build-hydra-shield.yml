@@ -66,7 +66,3 @@ jobs:
         with:
           name: HYDRA-SHIELD-APK
           path: release/HYDRA-SHIELD.apk
-          if-no-files-found: error
-          retention-days: 30
-rror
-          retention-days: 30
